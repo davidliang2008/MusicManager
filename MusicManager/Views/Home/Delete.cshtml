@@ -1,0 +1,21 @@
+﻿@model MusicManager.Models.Album
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<div class="row-fluid">
+@using (Html.BeginForm("Delete", "Home", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <fieldset>
+        <legend>Delete Confirmation</legend>
+        <p>Are you sure you want to delete the album titled 
+            <strong>@Model.Title</strong>?
+        </p>
+        <input type="submit" value="Delete" class="btn btn-inverse btn-large" />
+    </fieldset>
+}
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</div>

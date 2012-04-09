@@ -1,0 +1,115 @@
+﻿@model IEnumerable<MusicManager.Models.Album>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row-fluid">
+    <p>
+        @Html.ActionLink("Create New Album", "Create")
+    </p>
+    @{
+        string sortParm = (string.IsNullOrEmpty(ViewBag.sortParm)) ? "" : ViewBag.sortParm as string;
+        string filterStr = (string.IsNullOrEmpty(ViewBag.filterString)) ? "" : ViewBag.filterString as string;
+    }
+    @using (Html.BeginForm())
+    {
+        <p>
+            Filter by genre: @Html.TextBox("filterString", @filterStr)
+            <input type="submit" value="Search"/>
+        </p>
+    }
+    <table class="table table-striped">
+        <tr>
+            <th>
+                @if (sortParm.Contains("Date")) {
+                    if (sortParm.Contains("DESC")) {
+                        <i class="icon-arrow-down"></i>
+                        @Html.ActionLink("Created Time", "Index", new { sortOrder = "Date", filterString = filterStr })
+                    }
+                    else {
+                        <i class="icon-arrow-up"></i>
+                        @Html.ActionLink("Created Time", "Index", new { sortOrder = "Date DESC", filterString = filterStr })
+                    }
+                }
+                else {
+                    @Html.ActionLink("Created Time", "Index", new { sortOrder = "Date", filterString = filterStr })
+                }               
+            </th>
+            <th>
+                @if (sortParm.Contains("Title")) {
+                    if (sortParm.Contains("DESC")) {
+                        <i class="icon-arrow-down"></i>
+                        @Html.ActionLink("Title", "Index", new { sortOrder = "Title", filterString = filterStr })    
+                    } else {
+                        <i class="icon-arrow-up"></i>
+                        @Html.ActionLink("Title", "Index", new { sortOrder = "Title DESC", filterString = filterStr })
+                    }
+                }
+                else
+                {
+                    @Html.ActionLink("Title", "Index", new { sortOrder = "Title", filterString = filterStr })
+                }             
+            </th>
+            <th>
+                @if (sortParm.Contains("Artist")) {
+                    if (sortParm.Contains("DESC")) {
+                        <i class="icon-arrow-down"></i>
+                        @Html.ActionLink("Artist", "Index", new { sortOrder = "Artist", filterString = filterStr })    
+                    } else {
+                        <i class="icon-arrow-up"></i>
+                        @Html.ActionLink("Artist", "Index", new { sortOrder = "Artist DESC", filterString = filterStr })
+                    }
+                }
+                else
+                {
+                    @Html.ActionLink("Artist", "Index", new { sortOrder = "Artist", filterString = filterStr })
+                }
+            </th>
+            <th>
+                @if (sortParm.Contains("Genre")) {
+                    if (sortParm.Contains("DESC")) {
+                        <i class="icon-arrow-down"></i>
+                        @Html.ActionLink("Genre", "Index", new { sortOrder = "Genre", filterString = filterStr })    
+                    } else {
+                        <i class="icon-arrow-up"></i>
+                        @Html.ActionLink("Genre", "Index", new { sortOrder = "Genre DESC", filterString = filterStr })
+                    }
+                }
+                else
+                {
+                    @Html.ActionLink("Genre", "Index", new { sortOrder = "Genre", filterString = filterStr })
+                }
+            </th>
+            <th>
+                # of Tracks
+            </th>
+            <th></th>
+        </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Artist)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tracks.Count)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.AlbumId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.AlbumId })
+            </td>
+        </tr>
+    }
+    </table>
+</div>

@@ -1,0 +1,140 @@
+﻿@model MusicManager.Models.Album
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        // add a track
+        $('#add_track').click(function () {
+            var cnt = $('.track').length;
+            if (cnt < 20) {
+                var html = '<li class="track form-inline">';
+                html += 'Track order: <input type="text" class="input-small" name="track_order" />&nbsp;&nbsp;';
+                html += 'Length (sec): <input type="text" class="input-small" name="track_length" />&nbsp;&nbsp;';
+                html += 'Name: <input type="text" class="input-medium" name="track_name" />&nbsp;&nbsp;';
+                html += '<a class="btn btn-warning remove_track">remove</a>';
+                html += '</li>';
+                $('#tracks_area').append(html);
+            }
+        });
+        // remove a track
+        $('.remove_track').live("click", function () {
+            $(this).parent().remove();
+        });
+
+        // create album button click
+        $('#create_form').live("submit", function () {
+            var title = $('#Title').val();
+            var artist = $('#Artist').val();
+            var genre = $('#Genre').val();
+            var tracks = [];
+            $('.track').each(function () {
+                var track_order = $('input[name="track_order"]', this).val();
+                var track_length = $('input[name="track_length"]', this).val();
+                var track_name = $('input[name="track_name"]', this).val();
+                // I can implement validation on each track object here but I don't have time yet
+                tracks.push({
+                    trackname: track_name,
+                    order: track_order,
+                    length: track_length
+                });
+            });
+            var album = {
+                title: title,
+                artist: artist,
+                genre: genre,
+                tracks: tracks
+            };
+            //console.log(album);
+            // post data
+            $('#create_btn').val('loading...').attr('disabled', 'disabled');
+            $.ajax({
+                url: '@Url.Action("Create", "Home")',
+                type: 'POST',
+                data: JSON.stringify(album),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $('#create_btn').val('Create').removeAttr('disabled');
+                    if (data.Success) {
+                        window.location.href = "@Url.Action("Index", "Home")";
+                    }
+                    else
+                        alert('failed');
+                },
+                error: function () {
+
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+
+<div class="row-fluid">
+@using (Html.BeginForm("Create", "Home", FormMethod.Post, new { @id = "create_form", @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Create Album</legend>
+
+        <!-- title -->
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(model => model.Title)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(model => model.Title)
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+        </div>
+
+        <!-- artist -->
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(model => model.Artist)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(model => model.Artist)
+                @Html.ValidationMessageFor(model => model.Artist)
+            </div>
+        </div>
+
+        <!-- genre -->
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(model => model.Genre, "Genre")
+            </div>
+            <div class="controls">
+                @Html.EditorFor(model => model.Genre)
+                @Html.ValidationMessageFor(model => model.Genre)
+            </div>
+        </div>
+
+        <!-- multiple tracks -->
+        <div class="control-group">
+            <div class="control-label">
+                <label>Multiple tracks</label>
+            </div>
+            <div class="controls">
+                <a id="add_track" class="btn btn-success">add one</a>
+                (limit to 20)
+            </div>
+            <div class="controls">
+                <ul id="tracks_area">
+                </ul>
+            </div>
+        </div>
+              
+        <input id="create_btn" type="submit" value="Create" class="btn btn-inverse btn-large" />
+    </fieldset>
+}
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</div>
